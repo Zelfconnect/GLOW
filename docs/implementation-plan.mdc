@@ -1,0 +1,175 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# MicroGoal Implementation Plan
+
+This document outlines the step-by-step implementation plan for building the MicroGoal application, including checkpoints to verify progress. It also establishes the "Cursor-Rule" - a process for implementing each step methodically.
+
+## Implementation Plan & Checkpoints
+
+### Phase 0: Setup & Foundation
+- [✓] Project Structure Creation
+- [✓] Basic Configuration (`package.json`, `app.json`, `babel.config.js`)
+- [✓] Core Libraries Installation
+- [ ] **User Task:** Create Firebase project, enable Auth & Firestore
+- [✓] **User Task:** Add Firebase API keys/config to `services/firestore/firebase.js`
+- [✓] Basic Navigation Setup (`navigation/AppNavigator.js`, `App.js`)
+- [✓] State Management Setup (`store/index.js`)
+- **Checkpoint 0:** Can you run `npm install` and `expo start`? Does the basic app load in Expo Go without crashing, showing the placeholder navigator? Have you added your Firebase config details to `services/firestore/firebase.js`?
+
+### Phase 1: Authentication
+- [✓] Implement Firebase Authentication logic (`services/auth/authService.js` - Sign up, Log in, Log out, Check status)
+- [✓] Create Login Screen (`screens/LoginScreen.js`)
+- [✓] Create Signup Screen (`screens/SignupScreen.js`)
+- [✓] Integrate Auth Screens into Navigation (show Login/Signup if logged out, main app if logged in)
+- [✓] Connect Auth state to global context (`store/index.js`, `App.js`)
+- **Checkpoint 1:** Can a user successfully create an account? Can they log out and log back in? Is the correct screen (Login vs. Home) shown based on auth status?
+
+### Phase 2: Core Goal Viewing (Read-only)
+- [✓] Implement Firestore service functions to *read* Macro and Micro Goals (`services/firestore/goalService.js`)
+- [✓] Connect `HomeScreen` to display today's Micro Goals from context/service (`screens/HomeScreen.js`)
+- [✓] Create `MacroGoalsListScreen` to display all Macro Goals
+- [✓] ~~Create `MicroGoalsListScreen` to display Micro Goals for a selected Macro Goal~~ (Replaced by embedded view)
+- [✓] Integrate new list screens into navigation
+- [✓] Fetch and display data from Firestore via context/services upon login
+- **Note:** The method for viewing Micro Goals was updated to be an embedded view within Macro Goals (see Phase 3 changes).
+- **Checkpoint 2:** After logging in, does the app fetch and display any existing Macro Goals? Does `HomeScreen` attempt to load/display goals? Can the user expand a Macro Goal to see its details and associated Micro Goals?
+
+### Phase 3: Goal Creation & Editing
+- [✓] Implement Firestore service functions to *create* and *update* Macro and Micro Goals (`services/firestore/goalService.js`)
+- [✓] Create `EditMacroGoalScreen` (for adding/editing)
+- [✓] Create `EditMicroGoalScreen` (for adding/editing)
+- [✓] Implement UI for selecting goal frequency (daily, weekdays, custom days, etc.)
+- [✓] Integrate creation/editing screens into navigation (e.g., add buttons on list screens)
+- [✓] Connect forms to context/service to save data to Firestore
+- **Checkpoint 3:** Can the user create a new Macro Goal? Can they add associated Micro Goals with different frequencies (via the expanded view)? Can they edit existing goals? Are changes saved and reflected in the lists?
+
+### Phase 4: Daily Tracking & Progress
+- [ ] Implement logic for toggling Micro Goal completion in `GoalItem` component and `goalService` (Now potentially within `MicroGoalTabView`)
+- [ ] Implement Streak calculation logic in `goalService` when toggling completion
+- [ ] Implement basic XP system logic (add XP field to goals, update Macro Goal XP on Micro Goal completion)
+- [ ] Update UI (`HomeScreen`, `GoalItem`) to visually toggle completion and display streaks
+- [ ] Implement basic daily reflection notes feature (simple text input saving to Firestore, perhaps per day)
+- **Checkpoint 4:** Can the user tap/click on a goal on the `HomeScreen` to mark it complete/incomplete? Does the UI update? Can the user mark micro goals complete within the expanded macro goal view? Does the streak count update correctly after consecutive completions? Is XP calculated (even if not displayed prominently yet)? Can reflection notes be saved?
+
+### Phase 5: Visualization & Polish
+- [ ] Implement Progress Visualization components (e.g., simple bars for weekly progress, XP progress)
+- [ ] Integrate visualizations onto relevant screens (e.g., `HomeScreen`, `MacroGoalsListScreen`)
+- [ ] Implement Achievement celebrations (e.g., simple alert/modal on reaching milestones)
+- [ ] Implement Color coding for goals (allow selecting color on creation/edit, use it in UI)
+- [ ] Implement Goal templates feature (pre-defined goal structures)
+- [✓] Implement Onboarding flow explaining Macro/Micro goal relationship
+- [✓] Refine Macro Goal display to be expandable with embedded Micro Goal tabs
+- [✓] **Navigation Restructuring:**
+  - [✓] Replace Stack Navigator with Tab + Stack hybrid navigation
+  - [✓] Create bottom tab navigator with Goals, Chat, and Settings tabs
+  - [✓] Create Chat screen placeholder for future AI coach
+  - [✓] Reorganize Goals tab to show Today's Goals at top with Macro Goals below
+  - [✓] Move Settings to its own tab for easier access
+- [ ] General UI/UX refinement
+- **Checkpoint 5:** Are progress visualizations displayed? Do achievement celebrations trigger? Can goal colors be set and displayed? Is the template feature functional? Is the onboarding shown to new users? Does the expandable goal view work smoothly? Does the app use tabbed navigation with Goals, Chat, and Settings tabs? Does the app feel more polished?
+
+### Phase 6: Offline Support
+- [ ] Review and test Firestore offline capabilities with existing features
+- [ ] Implement specific offline handling logic in `services/offline/` *if needed*
+- [ ] Add UI indicators for offline status if desired
+- **Checkpoint 6:** Can the user view goals and mark today's goals complete/incomplete while offline? Does the data sync correctly when connectivity is restored?
+
+## The Cursor-Rule: Implementation Process
+
+For each step in our implementation plan, we will follow this consistent process:
+
+1. **Select Step:**
+   - Choose the specific step from the plan (e.g., "Implement Login Screen UI")
+   - Communicate clearly which step we're working on
+
+2. **Design/Explain:**
+   - Discuss the approach for implementing the step
+   - Share any relevant considerations or design decisions
+   - Ask clarifying questions if needed before writing code
+
+3. **Implement:**
+   - Write and apply the code modifications needed for the step
+   - Focus on completing one step at a time
+   - Consider edge cases and error handling
+
+4. **Log Change:**
+   - Document what was implemented/changed
+   - Format: "IMPLEMENTED: [description of what was done]"
+   - Example: "IMPLEMENTED: Created basic UI structure for LoginScreen.js with email/password inputs and a login button"
+
+5. **Test & Verify:**
+   - Test the functionality related to that specific step
+   - Verify it works as expected
+   - Document any issues encountered
+
+6. **Confirm & Checkmark:**
+   - Once verified, mark the step as complete: "[✓]"
+   - For checkpoint completion, note: "Checkpoint N passed"
+
+7. **Proceed:**
+   - Move to the next step in the implementation plan
+   - Review the overall plan periodically to stay on track
+
+## Change Log
+
+This section will track all implementation changes:
+
+### Phase 0: Setup & Foundation
+- IMPLEMENTED: Project structure creation with directories for assets, components, screens, services, etc.
+- IMPLEMENTED: Configuration files (package.json, app.json, babel.config.js)
+- IMPLEMENTED: Basic App.js with navigation container
+- IMPLEMENTED: Navigation setup with placeholder screens
+- IMPLEMENTED: State management using Context API
+- IMPLEMENTED: Firebase configuration with project credentials and Analytics setup
+- IMPLEMENTED: Security enhancement by moving Firebase credentials to .env file using react-native-dotenv
+
+### Phase 1: Authentication
+- IMPLEMENTED: Created comprehensive authService.js with Firebase authentication methods including register, login, logout, password reset, and user data fetching
+- IMPLEMENTED: Created LoginScreen with email/password fields, login functionality, forgot password feature, and navigation to signup
+- IMPLEMENTED: Created SignupScreen with fields for name, email, password, and form validation
+- IMPLEMENTED: Updated AppNavigator.js to create separate stacks for authenticated and unauthenticated users
+- IMPLEMENTED: Updated App.js and store/index.js to handle authentication state changes
+
+### Phase 2: Core Goal Viewing
+- IMPLEMENTED: Verified Firestore service functions in goalService.js for reading Macro and Micro Goals, including getMacroGoals, getMicroGoals, and getTodaysMicroGoals
+- IMPLEMENTED: Enhanced HomeScreen.js to fetch and display today's Micro Goals from Firestore using goalService, including loading states, error handling, and the ability to toggle goal completion
+- IMPLEMENTED: Created MacroGoalsListScreen.js to display all Macro Goals with loading, error handling, and empty state displays
+- IMPLEMENTED: ~~Created MicroGoalsListScreen.js to display Micro Goals for a selected Macro Goal with the ability to toggle goal completion~~ (Replaced by embedded view)
+- IMPLEMENTED: Updated AppNavigator.js to include new list screens in the navigation flow
+- IMPLEMENTED: Enhanced store/index.js to fetch and load goal data from Firestore upon user login
+
+### Phase 3: Goal Creation & Editing
+- IMPLEMENTED: Added functions to update and delete macro and micro goals in goalService.js, including updateMacroGoal, updateMicroGoal, deleteMacroGoal, and deleteMicroGoal
+- IMPLEMENTED: Created EditMacroGoalScreen with form fields for title, description, anti-goal toggle, color selection, and target XP, with support for both creating new and editing existing macro goals
+- IMPLEMENTED: Created EditMicroGoalScreen with form fields for title, XP value, frequency selection (daily, weekdays, weekends, custom), and custom day selection, supporting both creation and editing
+- IMPLEMENTED: Implemented UI for selecting goal frequency with a visual selection system and day-of-week toggles for custom schedules
+- IMPLEMENTED: Updated navigation in AppNavigator.js to include new edit screens with appropriate titles based on create/edit mode
+- IMPLEMENTED: Added "+" buttons on list screens to create new goals and edit buttons on goal items to edit existing goals
+- IMPLEMENTED: Connected all forms to the appropriate Firestore service functions for saving and retrieving data
+- IMPLEMENTED: Refactored Macro Goal display on `MacroGoalsListScreen` to use `ExpandableMacroGoalItem` component, replacing direct navigation to `MicroGoalsListScreen`.
+- IMPLEMENTED: Created `ExpandableMacroGoalItem` component with expand/collapse functionality using `LayoutAnimation`.
+- IMPLEMENTED: Created `MicroGoalTabView` component with 'Process' and 'Outcome' tabs, displayed within expanded macro goals.
+- IMPLEMENTED: Integrated fetching and display of Micro Goals within the 'Process' tab of `MicroGoalTabView`.
+- IMPLEMENTED: Integrated display of Macro Goal details within the 'Outcome' tab of `MicroGoalTabView`.
+- IMPLEMENTED: Added Add/Edit buttons for Micro Goals within the `MicroGoalTabView`.
+
+Checkpoint 3 passed: Users can now create and edit both Macro Goals and Micro Goals with various frequency settings, and all changes are saved to Firestore. Micro goals are viewed within the expanded Macro Goal view.
+
+### Phase 4: Daily Tracking & Progress
+- IMPLEMENTED: Added `GoalOnboarding` component with multiple steps explaining the Macro/Micro goal relationship using modals and AsyncStorage to track shown status.
+- IMPLEMENTED: Integrated `GoalOnboarding` component into `MacroGoalsListScreen` to show automatically on first view.
+- IMPLEMENTED: Added `@react-native-async-storage/async-storage` dependency.
+
+### Phase 5: Visualization & Polish
+- IMPLEMENTED: Navigation restructuring with a new bottom tab navigator containing Goals, Chat, and Settings tabs.
+- IMPLEMENTED: Created ChatScreen.js with a placeholder for the future AI coach feature.
+- IMPLEMENTED: Created GoalsTabScreen.js that combines Today's Goals and Macro Goals in a single view.
+- IMPLEMENTED: Updated AppNavigator.js to use the new tab-based navigation structure.
+- IMPLEMENTED: Added icons for the tab navigator.
+- IMPLEMENTED: Maintained backward compatibility with existing navigation paths.
+
+### Phase 6: Offline Support
+*(To be filled as we implement)* 

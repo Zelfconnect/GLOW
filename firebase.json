@@ -1,0 +1,12 @@
+{
+  "firestore": {
+    "rules": "scripts/firestore.rules",
+    "indexes": "scripts/firestore.indexes.json"
+  },
+  "functions": {
+    "source": "functions",
+    "predeploy": [
+      "npm --prefix \"$RESOURCE_DIR\" install"
+    ]
+  }
+} 

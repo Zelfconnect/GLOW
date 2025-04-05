@@ -1,0 +1,42 @@
+# MicroGoal Cursor-Rules
+
+## The 7-Step Process
+
+For each implementation task in our [Implementation Plan](./implementation-plan.md), follow these steps:
+
+1. **SELECT**: Identify the next task from the implementation plan
+2. **EXPLAIN**: Discuss the approach before writing any code
+3. **IMPLEMENT**: Write the necessary code for just that task
+4. **LOG**: Document what was changed with "IMPLEMENTED: [description]"
+5. **TEST**: Verify the functionality works as expected
+6. **CHECKMARK**: Mark task complete with "[✓]" and record "Checkpoint X passed" at phase milestones
+7. **PROCEED**: Move to the next task
+
+## Key Guidelines
+
+- **One Task at a Time**: Complete and verify one task before moving to the next
+- **Document Everything**: Keep the change log updated with each implementation
+- **Regular Testing**: Test each component as it's built, not just at checkpoints
+- **Clarity in Communication**: Always specify which task is being worked on
+- **Checkpoint Verification**: Don't proceed to the next phase until checkpoint is confirmed
+
+## Checkmarking Format
+
+Use this format for marking tasks:
+```
+- [✓] Completed task
+- [ ] Not yet completed task
+```
+
+## Progress Updates
+
+After each implementation, update:
+1. The task's status in implementation-plan.md
+2. The Change Log section with what was implemented
+
+## Common Phrase Templates
+
+- "Working on: [task description]"
+- "IMPLEMENTED: [what was changed or added]"
+- "CHECKPOINT [X] PASSED: [summary of what's working]"
+- "Moving to: [next task]" 

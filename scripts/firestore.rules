@@ -1,0 +1,75 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper function to check if user is accessing their own data
+    function isUserOwned(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // Helper function to validate basic goal fields
+    function hasRequiredGoalFields(data) {
+      return data.keys().hasAll(['userId', 'title', 'createdAt', 'updatedAt']);
+    }
+    
+    // Users collection rules
+    match /users/{userId} {
+      // Users can read and update their own document
+      allow read, update, delete: if isUserOwned(userId);
+      
+      // Users can create their own document (matching their auth ID)
+      allow create: if isAuthenticated() && request.auth.uid == userId
+                     && request.resource.data.keys().hasAll(['uid', 'email', 'displayName', 'createdAt']);
+    }
+    
+    // Macro Goals collection rules
+    match /macroGoals/{goalId} {
+      // User can read their own goals
+      allow read: if isAuthenticated() && request.auth.uid == resource.data.userId;
+      
+      // User can create goals linked to their ID
+      allow create: if isAuthenticated() 
+                     && request.auth.uid == request.resource.data.userId
+                     && hasRequiredGoalFields(request.resource.data);
+      
+      // User can update/delete their own goals
+      allow update, delete: if isAuthenticated() 
+                             && request.auth.uid == resource.data.userId;
+    }
+    
+    // Micro Goals collection rules
+    match /microGoals/{goalId} {
+      // User can read their own goals
+      allow read: if isAuthenticated() && request.auth.uid == resource.data.userId;
+      
+      // User can create goals linked to their ID
+      allow create: if isAuthenticated() 
+                     && request.auth.uid == request.resource.data.userId
+                     && hasRequiredGoalFields(request.resource.data)
+                     && request.resource.data.keys().hasAll(['macroGoalId', 'frequency']);
+      
+      // User can update/delete their own goals
+      allow update, delete: if isAuthenticated() 
+                             && request.auth.uid == resource.data.userId;
+    }
+    
+    // Daily Progress collection rules
+    match /dailyProgress/{progressId} {
+      // User can read their own progress
+      allow read: if isAuthenticated() && request.auth.uid == resource.data.userId;
+      
+      // User can create progress entries linked to their ID
+      allow create: if isAuthenticated() 
+                     && request.auth.uid == request.resource.data.userId
+                     && request.resource.data.keys().hasAll(['userId', 'date']);
+      
+      // User can update/delete their own progress
+      allow update, delete: if isAuthenticated() 
+                             && request.auth.uid == resource.data.userId;
+    }
+  }
+}
