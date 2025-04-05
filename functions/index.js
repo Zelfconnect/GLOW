@@ -8,8 +8,7 @@ const { getFirestore } = require('firebase-admin/firestore');
 
 // Access Firebase environment configuration, then regular environment variables, then fallback
 const geminiApiKey = functions.config().gemini?.key || 
-                    process.env.GEMINI_API_KEY || 
-                    "AIzaSyCqQ-zoPHpBixnARaExj_sAQeNbyH30-xE";
+                    process.env.GEMINI_API_KEY;
 
 // Define constants matching client-side aiConfig
 const GEMINI_API_BASE_URL = "https://generativelanguage.googleapis.com/v1beta";
